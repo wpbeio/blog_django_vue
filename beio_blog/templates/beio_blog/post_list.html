@@ -1,0 +1,75 @@
+{% extends 'beio_blog/base.html' %}
+
+{% block content %}
+
+
+<div class="row">
+    <div  class="col-md-8">
+        <div style="padding:15px;background-color: #f9f9f9;" class="well fade in daytips" id="tweatherdiv">
+            <button id="close"  class="close" type="button">×</button>
+            <div style="line-height:20px" id="tweather">
+            </div>
+        </div>
+        <div id="home-post well clearfix">
+                {% for post in posts %}
+                    <article class="excerpt">
+                        <header>
+                            <h2>
+                                <a href="/post/{{post.pk}}">{{ post.title }}</a>
+                            </h2>
+                        </header>
+                        <p class="meta">
+                            <span class="date">{{ post.published_date | date:'Y-m-d' }}</span>
+                            <span class="viewnum">浏览(<a href="/">{{ post.browsesum }}</a>)</span>
+                            <span class="commentnum">评论(<a href="/">{{post.commentsnum}}</a>)</span>
+                        </p>
+                        <p class="text">{{ post.content | truncatechars:200 | safe }}</p>
+                    </article>
+                {% endfor %}
+        </div>
+            {% if page %}
+        <div class="panel-default">
+            <center>
+                <ul class="pagination">
+                          <li id="start-page">
+                            <a href="/">首页</a>
+                        </li>
+                        {% if page_obj.has_prev %}
+                            <li class="prev-page">
+                                <a href="?page={{ page_obj.prev_page_number }}">上一页</a>
+                            </li>
+                        {% endif %}
+                        {% for p in page_obj.paginator.page_range %}
+
+                            {% ifequal p page_obj.number %}
+                                <li class="active show-page">
+                                    <a href="?page={{ p }}">{{ p }}</a>
+                                </li>
+                            {% else %}
+                                <li class="show-page">
+                                    <a href="?page={{ p }}">{{ p }}</a>
+                                </li>
+                            {% endifequal %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li class="next-page">
+                                <a href="?page={{ page_obj.next_page_number }}">下一页</a>
+                            </li>
+                        {% endif %}
+                        <li id="end-page">
+                            <a href="?page={{ page_obj.paginator.num_pages }}">末页</a>
+                        </li>
+                        <li id="total-page">
+                            <span>共-{{ page_obj.paginator.num_pages }}-页</span>
+                        </li>
+                </ul>
+            </center>
+        </div>
+            {% endif %}
+        </div>
+
+    <div class="col-md-4">
+        {% include 'comments/latest_comments.html' %}
+    </div>
+</div>
+{% endblock content %}

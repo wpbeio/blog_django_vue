@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <!--手机html -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+    <title>{{website_title}}</title>
+    {% load staticfiles %} {% comment %}本地样式{% endcomment %} {% comment %}
+    <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap-theme.min.css' %}" />
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>{% endcomment %}
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="{% static 'jquery/jquery.min.js' %}"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="{% static '/images/favicon.ico' %}" />
+    <link rel="bookmark" href="{% static '/images/favicon.ico' %}" />
+    <script src="{% static '/prism/prism.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'prism/prism.css' %}">
+    <script src="{% static '/js/vmaig.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/vmaig.css' %}"> {% comment %}
+    <link rel="stylesheet" href="{% static '/css/vmaig_comments.css' %}">
+    <link rel="stylesheet" href="{% static '/css/vmaig_auth.css' %}">{% endcomment %} {% comment %}
+    <link rel="stylesheet" href="{% static '/jquery/jquery.Jcrop.min.css' %}">{% endcomment %}
+    <script src="{% static '/jquery/jquery.cookie.js' %}"></script>
+    <!--
+    
+    <script src="{% static '/jquery/jquery.Jcrop.min.js' %}"></script> -->
+
+
+    {% block css%} {% endblock%}
+</head>
+
+<body id="vmaig">
+    <!-- 导航栏 -->
+    {% include "beio_blog/include/nav.html"%}
+    <!-- 文章列表 与 侧边的东西 -->
+    <div id="vmaig-main">
+        <div id="vmaig-content" class="container">
+            <div class="row">
+                <div id="content" class=" col-md-8 col-ls-9 flex" style=" padding-bottom: 30px;">
+                    {% block main %} {% endblock %}
+                </div>
+                <!-- 右边的widgets -->
+                {%if latest_comment_list%}
+                <div id="vmaig-side" class="col-md-4 col-lg-3 hidden-xs">
+                    {% include "beio_comments/latest_comments.html"%}
+                </div>
+                {%endif%}
+            </div>
+        </div>
+        <footer>
+            <div class="container">
+                <p class="text-center">基于Dajngo1.10,Bootsratp3,
+                    <a href="/">网站地图</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+
+{% block js%}{% endblock js%}
+<script>
+    $(function () {
+        var is_hide = $('#vmaig-side');
+        if (is_hide.length <= 0) { // 隐藏
+            $('#content').removeClass('col-md-8 col-lg-9').addClass('col-md-12 col-lg-12');
+        }
+    })
+</script>
+
+</html>

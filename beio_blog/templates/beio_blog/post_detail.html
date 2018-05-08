@@ -1,0 +1,30 @@
+
+{% extends 'beio_blog/base.html' %} 
+
+<!-- {% url 'post_publish' pk=post.pk as %}  -->
+{% block main %}
+{% url 'post_remove' post.pk as remove %} 
+{% url 'post_edit' post.pk as edit %}
+<div class="well">
+    <h1>{{ post.title }}</h1>
+    <div class="date">
+        {% if post.published_date %}
+        <a>
+            <span class="glyphicon glyphicon-calendar">{{ post.published_date | date:'Y-m-d' }}</span>
+        </a>
+        {% endif %} {% if user.is_authenticated %}
+        <a>
+            <span class="glyphicon glyphicon-user">{{post.author}}</span>
+        </a>
+        <a class="btn btn-default" href="{{edit}}">
+            <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+        <a class="btn btn-default" href="{{remove}}">
+            <span class="glyphicon glyphicon-trash"></span>
+        </a>
+        {% endif %}
+    </div>
+    <p class="text">{{ post.context | safe }}</p>
+</div>
+
+{% include "beio_comments/comments.html"%} {% endblock main %}

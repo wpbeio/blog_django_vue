@@ -1,0 +1,97 @@
+ {% extends "beio_blog/base.html" %} {% load staticfiles %} {% block js %}
+<link rel="stylesheet" href="{% static 'tinymce/jquery.tinymce.min.js' %}">
+<script type="text/javascript" src="{% static 'tinymce/tinymce.min.js' %}">
+</script>
+<script type="text/javascript">
+    tinymce.init({
+        selector: 'textarea',
+        height: 500,
+        theme: 'modern',
+        plugins: [
+            'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            'searchreplace visualblocks visualchars code fullscreen',
+            'insertdatetime media nonbreaking save table contextmenu directionality',
+            'emoticons template paste textcolor colorpicker textpattern imagetools',
+            'codesample '
+        ],
+        extended_valid_elements: "textarea[cols|rows|disabled|name|readonly|class]",
+        toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image codesample ',
+        toolbar2: 'print preview media | forecolor backcolor emoticons',
+        codesample_languages: [{
+                text: 'HTML/XML',
+                value: 'markup'
+            },
+            {
+                text: 'JavaScript',
+                value: 'javascript'
+            },
+            {
+                text: 'CSS',
+                value: 'css'
+            },
+            {
+                text: 'PHP',
+                value: 'php'
+            },
+            {
+                text: 'Ruby',
+                value: 'ruby'
+            },
+            {
+                text: 'Python',
+                value: 'python'
+            },
+            {
+                text: 'Java',
+                value: 'java'
+            },
+            {
+                text: 'C',
+                value: 'c'
+            },
+            {
+                text: 'C#',
+                value: 'csharp'
+            },
+            {
+                text: 'C++',
+                value: 'cpp'
+            }
+        ],
+        image_advtab: true,
+        content_css: [
+            '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+            '//www.tinymce.com/css/codepen.min.css'
+        ],
+        language: 'zh_CN'
+    });
+</script>
+<script type="text/javascript">
+    function save() {
+        document.getElementById("flag").value = '0';
+        //document.getElementById("myform").submit();
+
+    }
+
+    function publish() {
+        document.getElementById("flag").value = '1';
+        //document.getElementById("myform").submit();
+
+    }
+</script>
+{% endblock js%}
+
+<!-- {% load bootstrap_tags %} -->
+{% block main %} {% url 'post_create' as create %} {% url 'post_edit' post.pk as edit %}
+<div class="well">
+    <h1>新增博文</h1>
+    <form method="POST" class="post-form" id="myform"> {% csrf_token %} {{ form|as_bootstrap }}
+        <input type="hidden" name="flag" id="flag">
+        <input type="hidden" name="flag" id="flag">
+        <button type="button" onclick="javascrtpt:window.location.href='{{ create }}'" class="save btn btn-default">存为草稿</button>
+        <!-- <button type="button" onclick="publish();window.location.href={{ create }};" class="save btn btn-default">发布</button> -->
+        <input type="submit" value="保存" onclick="javascrtpt:window.location.href='{{ create }}'" class="save btn btn-default"/>
+    </form>
+</div>
+
+{% endblock main %}

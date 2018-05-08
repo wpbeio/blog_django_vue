@@ -1,0 +1,13 @@
+{% extends 'beio_base.html' %}
+{% block content %}
+    {% for post in posts %}
+        <div class="post">
+            <h1>
+            <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a>
+           	</h1>
+             <p class="date ">创建时间: {{ post.created_date | date:'Y-m-d' }}</p>
+            <p>{{ post.text | truncatechars:200 | safe}}</p>
+        </div>
+    {% endfor %}
+
+{% endblock content %}

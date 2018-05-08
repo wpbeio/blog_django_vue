@@ -1,0 +1,81 @@
+<div class="well">
+    <div class="comment">
+        <div class="comment-tx">
+            {% if user.img%}
+            <img src="{{user.img}}" width="40" /> {%else%}
+            <img src="http://vmaig.qiniudn.com/image/tx/tx-default.jpg" width="40" /> {%endif%}
+        </div>
+        <div class="comment-edit clearfix">
+            <form id="comment-form" method="post" role="form">
+                {% csrf_token %}
+                <textarea id="comment" name="comment" class="form-control" rows="4" placeholder="请输入评论 限200字!"></textarea>
+                <button type="submit" class="btn btn-comments pull-right">提交</button>
+            </form>
+        </div>
+        <ul>
+            {% for comment in comment_list%}
+            <li>
+                <div class="comment-tx">
+                    {% if comment.user.img %}
+                    <img src={{comment.user.img}} width="40" /> {%else%}
+                    <img src="http://vmaig.qiniudn.com/image/tx/tx-default.jpg" width="40" /> {%endif%}
+                </div>
+                <div class="comment-content">
+                    <a>
+                        <h1>{{comment.user.username}}</h1>
+                    </a>
+                    {% if comment.parent %}
+                    <div class="comment-quote">
+                        <p>
+                            <a>@{{comment.parent.user.username}}：</a>
+                            {% autoescape on %} {{comment.parent.text}} {% endautoescape %}
+                        </p>
+                    </div>
+                    {% endif %}
+                    <p></p>
+                    <p>
+                        评论： {% autoescape on %} {{comment.text}} {% endautoescape %}
+                    </p>
+                    <!-- <p>{{comment.create_time|date:"Y-m-d H:i:s" }}
+                                            <a class='quote' href="#anchor-quote" onclick="return CommentQuote('{{comment.user.username}}',{{comment.id}});">回复</a>
+                                        </p> -->
+                </div>
+            </li>
+            {% endfor%}
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    // function CommentQuote(user_name, commend_id){
+    //     comment = document.getElementById('comment');
+    //     comment.value = "@['"+user_name+"', "+commend_id+"]: ";
+    //     comment.focus();;
+    //     comment.setSelectionRange(comment.value.length, comment.value.length);
+    // };
+
+    $('#comment-form').submit(function () {
+        $.ajax({
+            type: "POST",
+            url: "/comment/{{post.pk}}",
+            // headers: {"X-CSRFToken": csrftoken},
+            data: {
+                "comment": $("#comment").val(),
+                // "X-CSRFToken":$.cookie('csrftoken')
+            },
+
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            },
+            success: function (data, textStatus) {
+                $("#comment").val("");
+                $(".comment ul").prepend(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.responseText);
+
+            }
+
+        });
+        return false;
+    });
+</script>

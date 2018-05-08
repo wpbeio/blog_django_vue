@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="{% static 'jquery/jquery.min.js' %}"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<!-- <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script> -->
+
+<script src="{% static 'prism/prism.js' %}"></script>
+<link rel="stylesheet" href="{% static 'prism/prism.css' %}">
+<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+<script src="{% static 'jquery/jquery.cookie.js' %}"></script>
+    <script type="text/javascript">
+        //新浪天气
+        var url = "http://sapi.sina.cn/ls/allasync?ver=3";
+        jQuery.ajax({
+            url: url,
+            type: "get",
+            timeout: 60000,
+            dataType: "jsonp",
+            success: function (record, type) {
+                var d = eval(record);
+                var img = d.retData.weather.icon_v3; //图标 icon icon_v3
+                var city = d.retData.weather.city;
+                var up = d.retData.weather.up;
+                var down = d.retData.weather.down;
+                var e = jQuery("#tweather");
+                if (img){
+                    e.empty();
+                    var tips = "If you don't bird me,I won't bird you,too.";
+                    e.append(tips + "<div id='wicon' class='pull-right' style='margin-right:5px'><img src='" + img + "' width=20 height=20 />&nbsp;" + city + "&nbsp; " + down + "&nbsp;~&nbsp;" + up + "℃</div>");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+
+
+
+
+
+    </script>
+<html>
+<head>
+    <title>Beio-听风说雨</title>
+</head>
+<body id="beio-bodyer">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <!--.container-fluid 类用于 100% 宽度，占据全部视口（viewport）的容器。-->
+        <!--Logo Brand-导航条的页头,bootstrap中的一个带有图标的标签, 然后这里也是在移动端, 就是小于768设备显示的效果 -->
+        <div class="navbar-header">
+            <!--小屏显示 显示内容指向.bs-navbar-collapse -->
+            <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">导航条</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">听风说雨</a>
+        </div>
+
+        <!--导航条 3.这部分也是移动端折叠的部分, 也是为了能够更好的展现页面在移动端. -->
+        <div  class="navbar-collapse collapse" >
+            <ul class="nav navbar-nav top-navbar-nav">
+                <li id="home" class="active">
+                    <a href="/" title="主页" >
+                        主页
+                    </a>
+                </li>
+                <li id="aboutme">
+                    <a  href="/About">
+                       关于本站
+                    </a>
+                </li>
+                <li id="leavemsg">
+                    <a  href="{% url 'down'%}">
+                        留言墙
+                    </a>
+                </li>
+                
+                <li> <form action="/Search/Index" method="get" target="_blank" role="search" class="navbar-form navbar-right" id="searchform">
+                    <div class="form-group">
+                        <input type="text" placeholder="请输入要搜索关键词" autocomplete="off" data-provide="typeahead" class="form-control" name="searchWords" id="searchWords">
+                    </div>
+                    <button id="searchbtn" class="btn" type="submit">
+                        搜索
+                    </button>
+                </form>
+                </li>
+           
+             {% if user.is_authenticated %}
+                    <li class="dropdown" id="admin">
+                        <a  href="/admin">
+                             管理
+                        </a>
+                    </li>
+                    <li  id="addpost">
+                        <a  href="{% url 'post_new'%}">
+                             新增
+                        </a>
+                    </li>
+                    <li  id="logout">
+                        <a  href="/usercontrol/logout">
+                             注销
+                        </a>
+                    </li>
+                {% else %}
+                    <li  id="login">
+                        <a data-toggle="modal"  data-target="#AuthDiv"  href="/usercontrol/login" class="dropdown-toggle toplevel"> 
+                             登录
+                        </a>
+
+                    </li>
+                    <li  id="register">
+                         <a data-toggle="modal"  data-target="#AuthDiv"  href="/usercontrol/register">
+                             注册
+                        </a>
+                    </li> 
+                {% endif %}
+                </ul>
+        </div>
+    
+    </div>
+</nav>
+<div class="container">
+        {% block content %}
+
+        {% endblock %}
+</div>
+    <div class="modal fade" id="AuthDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="modaltitle"></h4>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+</body>
+<script type="text/javascript">
+    $(function () {
+        $('#searchWords').on('keydown', function (e) {
+            var key = e.which;
+            if (key == 13) {
+                e.preventDefault();
+                var words = $('#searchWords').val();
+                words = $.trim(words);
+                if (words == ' ' || words == null || words == undefined) {
+                    alert('请输入搜索词');
+                } else {
+                    $('#searchform').submit();
+                }
+            }
+            return false;
+        });
+    });
+</script>
+</html>

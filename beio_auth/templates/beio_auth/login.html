@@ -1,0 +1,70 @@
+{% extends 'beio_auth/base.html' %}
+{% block main %} 
+
+{% url "user-view" 'forgetpassword' as forgetpassword_url %} 
+{% url "user-view" 'register' as register_url %}
+<div id="auth-login">
+    <div class="panel panel-auth">
+        <div class="panel-heading">
+            <h3 class="panel-title">请登陆</h3>
+        </div>
+        <form id="auth-login-form" class="clearfix" method="post" role="form">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-user"></span>
+                    </div>
+                    <input id="auth-login-username" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-lock"></span>
+                    </div>
+                    <input id="auth-login-password" type="password" class="form-control">
+                </div>
+            </div>
+            <div id="auth-forgetpassword"><a href="{{ forgetpassword_url }}">忘记密码?</a></div>
+            <button id="auth-login-button" type="submit" class="btn btn-auth pull-left">登录</button>
+            <a href="{{register_url}}" type="button" class="btn btn-auth pull-right">注册</a>
+        </form>
+    </div>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+    $('#auth-login-form').submit(function () {
+        $.ajax({
+            type: "POST",
+            url: "/usercontrol/login",
+            data: {
+                "username": $("#auth-login-username").val(),
+                "password": $("#auth-login-password").val()
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            },
+            success: function (data, textStatus) {
+                var errors = data["errors"];
+                if (errors.length == 0) {
+                    location.replace("/");
+                } else {
+                    //alert(errors);
+                    var str = ""
+                    for (var key in errors) {
+                        str += errors[key] + "\n";
+                    }
+                    alert(str);
+                }
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.responseText);
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}
