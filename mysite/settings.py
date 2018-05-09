@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL='beio_auth.BeioUser'
+AUTH_USER_MODEL = 'beio_auth.BeioUser'
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'beio_system',
     'django_forms_bootstrap',
     # 'notifications',
-    
+
 
 
 ]
@@ -64,7 +64,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['blog/dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,7 +75,7 @@ TEMPLATES = [
             ],
         },
     },
-    
+
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
@@ -144,16 +144,17 @@ DEFAULT_FROM_EMAIL = '13618631329@163.com'
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
-    '/beio_blog/static/',
+    os.path.join(BASE_DIR, "blog/dist/static"),
+
 
 )
-
+MAX_TAG_LENGTH = 50
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-LOGIN_URL='/usercontrol/login/'
+LOGIN_URL = '/usercontrol/login/'
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 WEBSITE_TITLE = '坐听风雨'
-WEBSITE_WELCOME='歡迎光臨'
-DOMAIN='localhost:8090'
+WEBSITE_WELCOME = '歡迎光臨'
+DOMAIN = 'localhost:8090'

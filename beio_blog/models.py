@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from tagging.fields import TagField
 from tagging.models import Tag
 from django.conf import settings
@@ -36,12 +36,20 @@ STATUS = {
 # Create your models here.
 
 
+# CASCADE：模拟SQL语言中的ON DELETE CASCADE约束，将定义有外键的模型对象同时删除！（该操作为当前Django版本的默认操作！）
+# PROTECT:阻止上面的删除操作，但是弹出ProtectedError异常
+# SET_NULL：将外键字段设为null，只有当字段设置了null=True时，方可使用该值。
+# SET_DEFAULT:将外键字段设为默认值。只有当字段设置了default参数时，方可使用。
+# DO_NOTHING：什么也不做。
+# SET()：设置为一个传递给SET()的值或者一个回调函数的返回值。注意大小写。
+
+
 class Category(models.Model):
     """bolg的分类"""
     name = models.CharField(max_length=100, verbose_name='名称')
 
     child = models.ForeignKey('self', default=None,
-                              blank=True, null=True, verbose_name='下级分类')
+                              blank=True, null=True, verbose_name='下级分类', on_delete=models.SET_NULL)
     rank = models.IntegerField(default=0, verbose_name='排序')
     status = models.IntegerField(default=0, choices=STATUS.items())
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
@@ -61,9 +69,10 @@ class Category(models.Model):
 
 class Post(models.Model):
     """新建一个模型,实际上就是一个映射关系，这边是实体，应该可以自动创建数据库字段和表，django的ORM不知道工作原理"""
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='作者')
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name='作者', on_delete=models.SET_NULL)
     category = models.ForeignKey(
-        Category, verbose_name='分类', default=None, blank=True, null=True)
+        Category, verbose_name='分类', default=None, blank=True, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=200, verbose_name='标题')
 
     context = models.TextField(verbose_name='正文', default='')

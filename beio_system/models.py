@@ -5,8 +5,8 @@ from django.conf import settings
 # Create your models here.
 # 导航条状态
 STATUS = {
-        0: u'开启',
-        1: u'关闭',
+    0: u'开启',
+    1: u'关闭',
 }
 
 IS_READ = {
@@ -23,10 +23,10 @@ class Notification(models.Model):
     from_user = models.ForeignKey(settings.AUTH_USER_MODEL,
                                   default=None, blank=True, null=True,
                                   related_name='from_user_notification_set',
-                                  verbose_name=u'发送者')
+                                  verbose_name=u'发送者', on_delete=models.SET_NULL)
     to_user = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name='to_user_notification_set',
-                                verbose_name=u'接收者')
+                                verbose_name=u'接收者', on_delete=models.SET_NULL)
     type = models.CharField(max_length=20, verbose_name=u'类型',
                             null=True, blank=True)
 
@@ -54,6 +54,7 @@ class Link(models.Model):
     class Meta:
         verbose_name_plural = verbose_name = u'友情链接'
         ordering = ['-create_time']
+
 
 class Nav(models.Model):
     name = models.CharField(max_length=40, verbose_name=u'导航条内容')

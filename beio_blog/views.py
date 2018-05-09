@@ -4,7 +4,7 @@ from .models import Post
 from django.contrib import auth
 from beio_comments.models import Comment
 from .forms import PostForm
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
