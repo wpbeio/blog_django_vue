@@ -40,7 +40,7 @@ class Comment(models.Model):
                                verbose_name=u'引用', on_delete=models.SET_NULL)
 
     class Meta:
-        verbose_name_plural = verbose_name = u'评论'
+        verbose_name_plural = verbose_name = u'评论' 
         ordering = ['-create_time']
         # app_label = string_with_title('comments', u"评论管理")
 

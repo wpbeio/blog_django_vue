@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.views.generic  import View,ListView,DetailView,TemplateView
 from django.core.exceptions import PermissionDenied
 from .models import Comment
-from notifications.signals import notify
+# from notifications.signals import notify
 from beio_blog.models import Post
 from django.contrib.auth.decorators import login_required
 

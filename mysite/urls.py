@@ -30,7 +30,7 @@ urlpatterns = [
     # url(r'', include('beio_comments.urls')),
     # url(r'^accounts/login/$', auth_views.login, name='login'),
     # url(r'^accounts/logout/$', auth_views.logout, name='logout'),
-    url(r'^inbox/notifications/', include('notifications.urls')),
+    # url(r'^inbox/notifications/', include('notifications.urls')),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

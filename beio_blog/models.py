@@ -70,7 +70,7 @@ class Category(models.Model):
 class Post(models.Model):
     """新建一个模型,实际上就是一个映射关系，这边是实体，应该可以自动创建数据库字段和表，django的ORM不知道工作原理"""
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name='作者', on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, verbose_name='作者',null=True, on_delete=models.SET_NULL)
     category = models.ForeignKey(
         Category, verbose_name='分类', default=None, blank=True, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=200, verbose_name='标题')
