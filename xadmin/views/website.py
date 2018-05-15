@@ -27,7 +27,7 @@ class UserSettingView(BaseAdminView):
     def post(self, request):
         key = request.POST['key']
         val = request.POST['value']
-        us, created = UserSettings.get_or_create(
+        us, created = UserSettings.objects.get_or_create(
             user=self.user, key=key)
         us.value = val
         us.save()
@@ -58,7 +58,7 @@ class LoginView(BaseAdminView):
         })
         defaults = {
             'extra_context': context,
-            'current_app': self.admin_site.name,
+            # 'current_app': self.admin_site.name,
             'authentication_form': self.login_form or AdminAuthenticationForm,
             'template_name': self.login_template or 'xadmin/views/login.html',
         }
@@ -84,7 +84,7 @@ class LogoutView(BaseAdminView):
         context = self.get_context()
         defaults = {
             'extra_context': context,
-            'current_app': self.admin_site.name,
+            # 'current_app': self.admin_site.name,
             'template_name': self.logout_template or 'xadmin/views/logged_out.html',
         }
         if self.logout_template is not None:

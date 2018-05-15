@@ -94,8 +94,9 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 # class UploadTxForm(forms.ModelForm):
-    
+
     # 用户修改界面
+
 
 class ChangeUserForm(forms.ModelForm):
 
@@ -181,9 +182,9 @@ class PasswordRestForm(forms.ModelForm):
 
         try:
             send_mail(title, message, from_email, [self.user.email])
-        except Exception as e:
+        except Exception():
             logger.error(
-                u'[UserControl]用户重置密码邮件发送失败:[{}]/[{}]'.format(
-                    username, email
+                u'[UserControl]用户重置密码邮件发送失败:[{0}]/[{1}]'.format(
+                    self.user.username, email
                 )
             )

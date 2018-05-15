@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python 
+"""评论控制器"""
+
 import logging
 import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic  import View,ListView,DetailView,TemplateView
+from django.views.generic import View, ListView, DetailView, TemplateView
 from django.core.exceptions import PermissionDenied
 from .models import Comment
 # from notifications.signals import notify
@@ -45,7 +48,10 @@ logger = logging.getLogger(__name__)
 
 class CommentControl(View):
     # @login_required
-    def post(self, request, *args, **kwargs):
+
+    """评论上传"""
+    
+    def post(self, *args, **kwargs):
         # 获取当前用户
         user = self.request.user
         # 获取评论
@@ -53,7 +59,7 @@ class CommentControl(View):
         # 判断当前用户是否是活动的用户
         if not user.is_authenticated():
             logger.error(
-                u'[CommentControl]当前用户非活动用户:[{}]'.format(
+                "[CommentControl]当前用户非活动用户:[{}]".format(
                     user.username
                 )
             )
@@ -64,7 +70,7 @@ class CommentControl(View):
             # 默认使用pk来索引(也可根据需要使用title,en_title在索引
             post = PostModel.objects.get(pk=pk)
         except PostModel.DoesNotExist:
-            logger.error(u'[CommentControl]此文章不存在:[%s]' % pk)
+            logger.error("[CommentControl]此文章不存在:[{0}]".format(pk))
             raise PermissionDenied
 
         # 保存评论,使用消息组件进行推送消息
@@ -76,25 +82,25 @@ class CommentControl(View):
             text = text[text.find(':')+2:]
             try:
                 parent = Comment.objects.get(pk=parent_id)
-                info = u'{}回复了你在 {} 的评论'.format(
-                    user.username,
-                    parent.post.title
-                )
+                # info = u'{}回复了你在 {} 的评论'.format(
+                #     user.username,
+                #     parent.post.title
+                # )
 
-                Notification.objects.create(
-                    title=info,
-                    text=text,
-                    from_user=user,
-                    to_user=parent.user,
-                    url='/post/'+pk+'.html'
-                )
+                # Notification.objects.create(
+                #     title=info,
+                #     text=text,
+                #     from_user=user,
+                #     to_user=parent.user,
+                #     url='/post/'+pk+'.html'
+                # )
             except Comment.DoesNotExist:
-                logger.error(u'[CommentControl]评论引用错误:%s' % parent_str)
+                logger.error("[CommentControl]评论引用错误:{}".format(parent_str))
                 return HttpResponse(u"请勿修改评论代码！", status=403)
 
         if not text:
             logger.error(
-                u'[CommentControl]当前用户输入空评论:[{}]'.format(
+                "[CommentControl]当前用户输入空评论:[{}]".format(
                     user.username
                 )
             )
@@ -110,7 +116,7 @@ class CommentControl(View):
         comment.post.commentadd()
         try:
             img = comment.user.img
-        except Exception as e:
+        except :
             img = "http://vmaig.qiniudn.com/image/tx/tx-default.jpg"
 
         print_comment = u"<p>评论：{}</p>".format(text)
@@ -120,10 +126,7 @@ class CommentControl(View):
                                       <a>@{}</a>\
                                       {}\
                                   </p>\
-                              </div>".format(
-                parent.user.username,
-                parent.text
-            ) + print_comment
+                              </div>".format(parent.user.username, parent.text) + print_comment
         # 返回当前评论
         html = u"<li>\
                     <div class=\"vmaig-comment-tx\">\

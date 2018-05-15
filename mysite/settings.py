@@ -166,8 +166,6 @@ DEFAULT_FROM_EMAIL = '13618631329@163.com'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, "blog/dist/static"),
-
-
 )
 MAX_TAG_LENGTH = 50
 

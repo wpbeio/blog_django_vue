@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from django.http import HttpResponse, Http404, StreamingHttpResponse
+from django.http import HttpResponse, Http404, StreamingHttpResponse, JsonResponse
 from django.views.generic import View
 from django.conf import settings
 from django.core.mail import send_mail
@@ -26,29 +26,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Create your views here.
-
-
-# def big_file_download(request):
-#     # do something...
-
-#     def file_iterator(file_name, chunk_size=512):
-#         with open(file_name) as f:
-#             while True:
-#                 c = f.read(chunk_size)
-#                 if c:
-#                     yield c
-#                 else:
-#                     break
-
-#     the_file_name = "upload/2017/03/01/haha.docx"
-#     response = StreamingHttpResponse(file_iterator(the_file_name))
-#     response['Content-Type'] = 'application/octet-stream'
-#     response['Content-Disposition'] = 'attachment;filename="{0}"'.format(
-#         the_file_name)
-
-#     return response
-
 
 class UserControl(View):
 
@@ -72,7 +49,7 @@ class UserControl(View):
         elif slug == "register":
             return self.register(request)
         elif slug == "changepassword":
-            return self.changepassword(request)
+            return self.Changepassword(request)
         elif slug == "forgetpassword":
             return self.forgetpassword(request)
         elif slug == "changetx":
@@ -87,6 +64,7 @@ class UserControl(View):
     def login(self, request):
         username = request.POST.get("username", "")
         password = request.POST.get("password", "")
+        form = UserCreationForm(request.POST)
         user = auth.authenticate(username=username, password=password)
 
         errors = []
@@ -112,7 +90,7 @@ class UserControl(View):
 
     def register(self, request):
         username = self.request.POST.get("username", "")
-        password1 = self.request.POST.get("password1", "")
+
         password2 = self.request.POST.get("password2", "")
         email = self.request.POST.get("email", "")
 
@@ -125,7 +103,8 @@ class UserControl(View):
             try:
                 new_user = form.save()
                 current_site = request.get_host()
-                token = default_token_generator(new_user)
+                token = default_token_generator.make_token(new_user)
+
                 title = u"欢迎来到 {} ！".format(settings.WEBSITE_TITLE)
                 message = "".join([
                     u"你好！ {} ,感谢注册 {} ！\n\n".format(username, current_site),
@@ -141,9 +120,10 @@ class UserControl(View):
 
                 new_user.email_user(title, message, from_email)
                 '''登陆系统'''
-                user = auth.authenticate(username=username, password=password2)
+                user = auth.authenticate(
+                    username=new_user.username, password=new_user.password)
                 auth.login(request, user)
-            except Exception as e:
+            except Exception():
                 logger.error(
                     u'[UserControl]用户注册邮件发送失败:[{}]/[{}]'.format(
                         username, email
@@ -153,17 +133,19 @@ class UserControl(View):
 
         else:
             # 如果表单不正确,保存错误到errors列表中
-            for k, v in form.errors.items():
+            for v in form.errors.items():
                 # v.as_text() 详见django.forms.util.ErrorList 中
                 errors.append(v.as_text())
 
         mydict = {"errors": errors}
-        return HttpResponse(
-            json.dumps(mydict),
-            content_type="application/json"
-        )
+        return JsonResponse(mydict)
 
-    def changepassword(self, request):
+    def Changepassword(self, request):
+        """修改密码
+        Args:
+            self: 代表类本身.
+            request: HTTP请求.
+        """
         if not request.user.is_authenticated():
             logger.error(u'[UserControl]用户未登陆')
             raise PermissionDenied
@@ -173,7 +155,7 @@ class UserControl(View):
         errors = []
         # 验证表单是否正确
         if form.is_valid():
-            user = form.save()
+
             auth.logout(request)
         else:
             # 如果表单不正确,保存错误到errors列表中
@@ -188,8 +170,8 @@ class UserControl(View):
         )
 
     def forgetpassword(self, request):
-        username = self.request.POST.get("username", "")
-        email = self.request.POST.get("email", "")
+        # username = self.request.POST.get("username", "")
+        # email = self.request.POST.get("email", "")
 
         form = PasswordRestForm(request.POST)
 
@@ -204,11 +186,11 @@ class UserControl(View):
                 'from_email': from_email,
                 'request': request,
             }
-            user = form.save(**opts)
+            # user = form.save(**opts)
 
         else:
             # 如果表单不正确,保存错误到errors列表中
-            for k, v in form.errors.items():
+            for v in form.errors.items():
                 # v.as_text() 详见django.forms.util.ErrorList 中
                 errors.append(v.as_text())
 
@@ -227,7 +209,7 @@ class UserControl(View):
         try:
             uid = urlsafe_base64_decode(uidb64)
             user = BeioUser._default_manager.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, BeioUser.DoesNotExist):
+        except (TypeError, ValueError, OverflowError):
             user = None
 
         token_generator = default_token_generator
@@ -239,7 +221,7 @@ class UserControl(View):
                 user = form.save()
             else:
                 # 如果表单不正确,保存错误到errors列表中
-                for k, v in form.errors.items():
+                for v in form.errors.items():
                     # v.as_text() 详见django.forms.util.ErrorList 中
                     errors.append(v.as_text())
 
@@ -250,8 +232,8 @@ class UserControl(View):
             )
         else:
             logger.error(
-                u'[UserControl]用户重置密码连接错误:[{}]/[{}]'.format(
-                    uid64, token
+                u'[UserControl]用户重置密码连接错误:[{}]'.format(
+                    token
                 )
             )
             return HttpResponse(
@@ -270,7 +252,7 @@ class UserControl(View):
         # img = request.FILES['upload_tx']
         if not data:
             logger.error(
-                u'[UserControl]用户上传头像为空:[%s]'.format(
+                "[UserControl]用户上传头像为空:{}".format(
                     request.user.username
                 )
             )
