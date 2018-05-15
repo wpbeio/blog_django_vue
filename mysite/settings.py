@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'beio_comments',
     'beio_system',
     'django_forms_bootstrap',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
     # 'notifications',
 
 

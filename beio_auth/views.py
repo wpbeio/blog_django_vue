@@ -121,30 +121,28 @@ class UserControl(View):
         errors = []
         # 验证表单是否正确
         if form.is_valid():
-            current_site = request.get_host()
-            # current_site="qwe"
-            # site_name = current_site.name
-            # domain = current_site.domain
-            token =default_token_generator(username)
-            title = u"欢迎来到 {} ！".format(settings.WEBSITE_TITLE)
-            message = "".join([
-                u"你好！ {} ,感谢注册 {} ！\n\n".format(username, current_site),
-                u"请牢记以下信息：\n",
-                u"用户名：{}\n".format(username),
-                u"邮箱：{}\n".format(email),
-                u"网站：http://{}\n\n".format(settings.DOMAIN),
-                u'请访问该链接，完成用户验证:'.join([settings.DOMAIN, 'activate', token])
-            ])
-            from_email = settings.DEFAULT_FROM_EMAIL
-            try:
 
-                logger.error(current_site)
+            try:
                 new_user = form.save()
+                current_site = request.get_host()
+                token = default_token_generator(new_user)
+                title = u"欢迎来到 {} ！".format(settings.WEBSITE_TITLE)
+                message = "".join([
+                    u"你好！ {} ,感谢注册 {} ！\n\n".format(username, current_site),
+                    u"请牢记以下信息：\n",
+                    u"用户名：{}\n".format(username),
+                    u"邮箱：{}\n".format(email),
+                    u"网站：http://{}\n\n".format(settings.DOMAIN),
+                    u'请访问该链接，完成用户验证:'.join(
+                        [settings.DOMAIN, 'activate', token])
+                ])
+                from_email = settings.DEFAULT_FROM_EMAIL
+                logger.info(current_site)
 
                 new_user.email_user(title, message, from_email)
                 '''登陆系统'''
-                # user = auth.authenticate(username=username, password=password2)
-                # auth.login(request, user)
+                user = auth.authenticate(username=username, password=password2)
+                auth.login(request, user)
             except Exception as e:
                 logger.error(
                     u'[UserControl]用户注册邮件发送失败:[{}]/[{}]'.format(

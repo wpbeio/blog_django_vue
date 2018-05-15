@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic import  TemplateView
-
+import xadmin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^xadmin/', xadmin.site.urls),
     url(r'', include('beio_blog.urls')),
     url(r'', include('beio_comments.urls')),
     url(r'', include('beio_auth.urls')),
